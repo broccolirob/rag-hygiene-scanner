@@ -1,0 +1,19 @@
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "rag-hygiene-scan"
+version = "0.1.0"
+description = "CLI to scan docs for RAG corpus hygiene risks (injection indicators, risky HTML/MD, PII/secrets)."
+readme = "README.md"
+requires-python = ">=3.10"
+authors = [{ name = "Robert Schneider"}]
+license = "MIT"
+dependencies = [
+  "PyYAML>=6.0"
+]
+
+# We'll use a src/ layout; tell setuptools where to find packages.
+[tool.setuptools.packages.find]
+where = ["src"]

@@ -17,3 +17,9 @@ dependencies = [
 # We'll use a src/ layout; tell setuptools where to find packages.
 [tool.setuptools.packages.find]
 where = ["src"]
+
+[project.scripts]
+rag-scan = "rag_hygiene_scan.cli:main"
+
+[tool.pytest.ini_options]
+addopts = "-q"

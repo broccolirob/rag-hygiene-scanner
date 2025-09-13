@@ -34,7 +34,14 @@ HTML_RULES: List[Rule] = [
 ]
 
 # PII/secret heuristics
-PII_SECRET_RULES: List[Rule] = []
+PII_SECRET_RULES: List[Rule] = [
+    Rule("PII001", "Email-like string",
+         re.compile(r"[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}"), "low"),
+    Rule("PII002", "US-like phone pattern",
+         re.compile(r"(?:\+1[-.\s]?)?\(?\d{3}\)?[-.\s]\d{3}[-.\s]\d{4}"), "low"),
+    Rule("SEC001", "Likely secret prefix (sk_live|sk_test)",
+         re.compile(r"\bsk_(?:live|test)_[A-Za-z0-9]{8,}\b"), "high"),
+]
 
 # Compose defaults
 DEFAULT_RULES: List[Rule] = [*INJECTION_RULES, *HTML_RULES, *PII_SECRET_RULES]

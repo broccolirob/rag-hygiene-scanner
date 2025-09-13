@@ -1,6 +1,5 @@
 """
 Pattern / rule definitions for the RAG hygiene scanner.
-(Real rules come in later chunks; this is a minimal scaffold.)
 """
 from __future__ import annotations
 from dataclasses import dataclass
@@ -14,12 +13,30 @@ class Rule:
     pattern: Pattern
     severity: str  # "low" | "med" | "high"
 
-# Placeholder: empty default set (we'll add real ones in later chunks)
-DEFAULT_RULES: List[Rule] = []
+# Core indirect-injection indicators
+INJECTION_RULES: List[Rule] = [
+    Rule("INJ001", "Indirect instruction: ignore previous rules/instructions",
+         re.compile(r"(?i)\bignore (all|previous|above) (instructions?|rules?)\b"), "med"),
+    Rule("INJ002", "Policy override language",
+         re.compile(r"(?i)\boverride (policy|guardrails?)\b"), "med"),
+    Rule("INJ003", "Benign marker pattern (e.g., append [TESTMARK])",
+         re.compile(r"(?i)\bappend\s*\[TESTMARK\]"), "low"),
+]
+
+# Risky HTML/Markdown indicators
+HTML_RULES: List[Rule] = []
+
+# PII/secret heuristics
+PII_SECRET_RULES: List[Rule] = []
+
+# Compose defaults
+DEFAULT_RULES: List[Rule] = [*INJECTION_RULES, *HTML_RULES, *PII_SECRET_RULES]
 
 SEVERITY_ORDER = {"low": 1, "med": 2, "high": 3}
 
 def load_rules_from_config(cfg: Dict[str, Any] | None) -> List[Rule]:
-    """For now, just return DEFAULT_RULES; config support comes later."""
+    """
+    Returns default rules; in a later chunk we'll allow YAML to add/override.
+    """
     _ = cfg
     return DEFAULT_RULES

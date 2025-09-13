@@ -24,7 +24,14 @@ INJECTION_RULES: List[Rule] = [
 ]
 
 # Risky HTML/Markdown indicators
-HTML_RULES: List[Rule] = []
+HTML_RULES: List[Rule] = [
+    Rule("HTML001", "Raw <script> tag present",
+         re.compile(r"<\s*script\b", re.I), "high"),
+    Rule("HTML002", "<iframe> or similar embedded content present",
+         re.compile(r"<\s*iframe\b", re.I), "high"),
+    Rule("HTML003", "javascript: URI scheme present",
+         re.compile(r"(?i)javascript\s*:"), "high"),
+]
 
 # PII/secret heuristics
 PII_SECRET_RULES: List[Rule] = []

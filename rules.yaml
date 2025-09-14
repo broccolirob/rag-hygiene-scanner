@@ -1,0 +1,12 @@
+disable:
+  - INJ003        # ignore benign markers in this project
+
+severity_overrides:
+  HTML003: med    # treat 'javascript:' as medium for experimentation
+
+rules:
+  - code: USR001
+    desc: Custom indirect instruction phrase
+    pattern: "\\bcomply with the note below\\b"
+    severity: med
+    ignore_case: true

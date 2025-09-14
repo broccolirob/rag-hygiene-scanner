@@ -55,7 +55,54 @@ PII_SECRET_RULES: List[Rule] = [
 def _compose_default_rules() -> List[Rule]:
     return [*INJECTION_RULES, *HTML_RULES, *PII_SECRET_RULES]
 
-# For now, return defaults unchanged
 def load_rules_from_config(cfg: Dict[str, Any] | None) -> List[Rule]:
-    _ = cfg
-    return _compose_default_rules()
+    """
+    Build the active ruleset from defaults and an optional config dict.
+    Supported config keys:
+      - disable: [ "CODE1", "CODE2" ]
+      - severity_overrides: { "CODE": "low|med|high" }
+      - rules:               # add or replace rules by code
+          - code: "USR001"
+            desc: "Custom instruction phrase"
+            pattern: "\\bcomply with the note below\\b"
+            severity: "med"
+            ignore_case: true
+    """
+    rules = _compose_default_rules()  # start with defaults
+    if not cfg:
+        return rules
+
+    # 1) disable by code
+    disabled = set(cfg.get("disable", []))
+    if disabled:
+        rules = [r for r in rules if r.code not in disabled]
+
+    # 2) severity overrides
+    sev_over = cfg.get("severity_overrides", {}) or {}
+    if sev_over:
+        new_rules: List[Rule] = []
+        for r in rules:
+            if r.code in sev_over:
+                new_sev = sev_over[r.code].lower()
+                severity_rank(new_sev)  # validate (raises if invalid)
+                new_rules.append(Rule(r.code, r.desc, r.pattern, new_sev))
+            else:
+                new_rules.append(r)
+        rules = new_rules
+
+    # 3) add/replace rules
+    add_rules = cfg.get("rules", []) or []
+    by_code = {r.code: r for r in rules}
+    for item in add_rules:
+        code = item.get("code")
+        pat  = item.get("pattern")
+        if not code or not pat:
+            continue  # skip invalid entries
+        desc = item.get("desc", "custom")
+        sev  = item.get("severity", "med").lower()
+        severity_rank(sev)  # validate
+        ignore_case = bool(item.get("ignore_case", True))
+        compiled = compile_re(pat, ignore_case)
+        by_code[code] = Rule(code, desc, compiled, sev)
+
+    return list(by_code.values())

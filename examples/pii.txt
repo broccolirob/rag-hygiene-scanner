@@ -1,0 +1,3 @@
+Contact: alice.smith@example.com
+Phone: (415) 555-1212
+Never commit: sk_test_abcdEFGH12345678

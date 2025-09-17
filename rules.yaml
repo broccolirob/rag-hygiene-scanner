@@ -1,12 +1,23 @@
+# Example configuration for rag-scan
+# - disable a benign marker rule
+# - downgrade one severity
+# - add two custom rules (plain + ZWSP-obfuscated)
+
 disable:
-  - INJ003        # ignore benign markers in this project
+  - INJ003
 
 severity_overrides:
-  HTML003: med    # treat 'javascript:' as medium for experimentation
+  HTML003: med
 
 rules:
   - code: USR001
-    desc: Custom indirect instruction phrase
+    desc: Custom indirect phrase ("comply with the note below")
     pattern: "\\bcomply with the note below\\b"
+    severity: med
+    ignore_case: true
+
+  - code: USR002
+    desc: ZWSP-obfuscated IGNORE (I\u200bG\u200bN\u200bO\u200bR\u200bE)
+    pattern: "I\\u200bG\\u200bN\\u200bO\\u200bR\\u200bE"
     severity: med
     ignore_case: true

@@ -1,0 +1,59 @@
+name: ci
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  build-test:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version: ["3.10", "3.11"]
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+          cache: 'pip'
+
+      - name: Install deps
+        run: |
+          python -m pip install --upgrade pip
+          pip install -e . pytest flake8
+
+      - name: Lint
+        run: flake8
+
+      - name: Unit tests
+        run: pytest -q
+
+      - name: Run CLI on examples (JSON, fail-on med)
+        id: scan_json
+        run: |
+          set -o pipefail
+          rag-scan examples --format json --fail-on med --summary > rag_findings.json 2> summary.txt || echo "scan_exit=$?" >> $GITHUB_OUTPUT
+
+      - name: Run CLI on examples (CSV, summary only)
+        run: |
+          rag-scan examples --format csv -o rag_findings.csv --summary 2>> summary.txt || true
+
+      - name: Print summary to job summary
+        if: always()
+        run: |
+          echo "### RAG scan summary" >> $GITHUB_STEP_SUMMARY
+          echo "\`\`\`" >> $GITHUB_STEP_SUMMARY
+          cat summary.txt >> $GITHUB_STEP_SUMMARY || true
+          echo "\`\`\`" >> $GITHUB_STEP_SUMMARY
+
+      - name: Upload artifacts
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: rag-scan-artifacts-${{ matrix.python-version }}
+          path: |
+            rag_findings.json
+            rag_findings.csv
+            summary.txt
+          if-no-files-found: warn

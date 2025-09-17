@@ -1,4 +1,7 @@
 # RAG Corpus Hygiene Scanner
+![CI](https://github.com/broccolirob/rag-hygiene-scanner/actions/workflows/ci.yml/badge.svg)
+![Python](https://img.shields.io/badge/python-3.10%2B-blue.svg)
+![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)
 
 **Catch risky content *before* it reaches your RAG index.**  
 Find:

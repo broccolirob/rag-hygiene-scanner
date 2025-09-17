@@ -13,13 +13,28 @@ license = "MIT"
 dependencies = [
   "PyYAML>=6.0"
 ]
+keywords = ["RAG", "LLM", "security", "prompt-injection", "OWASP", "NIST", "DLP", "PII"]
+classifiers = [
+  "Programming Language :: Python :: 3",
+  "Programming Language :: Python :: 3.10",
+  "Programming Language :: Python :: 3.11",
+  "License :: OSI Approved :: MIT License",
+  "Intended Audience :: Developers",
+  "Topic :: Security",
+  "Topic :: Text Processing"
+]
+
+[project.urls]
+Homepage = "https://github.com/broccolirob/rag-hygiene-scanner"
+Repository = "https://github.com/broccolirob/rag-hygiene-scanner.git"
+Issues = "https://github.com/broccolirob/rag-hygiene-scanner/issues"
+
+[project.scripts]
+rag-scan = "rag_hygiene_scan.cli:main"
 
 # We'll use a src/ layout; tell setuptools where to find packages.
 [tool.setuptools.packages.find]
 where = ["src"]
-
-[project.scripts]
-rag-scan = "rag_hygiene_scan.cli:main"
 
 [tool.pytest.ini_options]
 addopts = "-q"

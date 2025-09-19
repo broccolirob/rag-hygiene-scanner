@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "rag-hygiene-scan"
-version = "0.1.0"
+version = "0.1.1"
 description = "CLI to scan docs for RAG corpus hygiene risks (injection indicators, risky HTML/MD, PII/secrets)."
 readme = "README.md"
 requires-python = ">=3.10"

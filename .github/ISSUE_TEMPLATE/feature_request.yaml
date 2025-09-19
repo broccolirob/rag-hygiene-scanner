@@ -1,0 +1,20 @@
+name: Feature request
+description: Suggest a new rule or capability
+labels: [enhancement]
+body:
+  - type: textarea
+    id: problem
+    attributes:
+      label: Problem / risk pattern
+      placeholder: "We see ZWSP-obfuscated instructions in RAG docs ..."
+    validations: { required: true }
+  - type: textarea
+    id: solution
+    attributes:
+      label: Proposed solution
+      placeholder: "New rule code USR00X, regex ..., severity med"
+  - type: textarea
+    id: examples
+    attributes:
+      label: Minimal examples
+      description: Provide harmless test content that triggers the new rule

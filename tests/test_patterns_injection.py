@@ -1,9 +1,12 @@
 # tests/test_patterns_injection.py
 import re
+
 from rag_hygiene_scan.patterns import load_rules_from_config
+
 
 def _rule(patterns, code):
     return next(r for r in patterns if r.code == code)
+
 
 def test_injection_rules_match_expected_phrases():
     rules = load_rules_from_config(None)

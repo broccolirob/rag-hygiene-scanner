@@ -1,7 +1,10 @@
-from pathlib import Path
 import pathlib
+from pathlib import Path
+
 import pytest
-from rag_hygiene_scan.scanner import scan_path, load_config, exit_code_for_findings
+
+from rag_hygiene_scan.scanner import exit_code_for_findings, load_config, scan_path
+
 
 def test_scan_path_happy_path(tmp_path: Path):
     # Good files that will trigger at least one finding each
@@ -21,7 +24,11 @@ def test_scan_path_happy_path(tmp_path: Path):
     # 'med' should fail (we have med/high)
     assert exit_code_for_findings(res["findings"], "med") == 1
     # If we required 'high', it still likely fails due to HTML003
-    assert exit_code_for_findings(res["findings"], "high") in (0, 1)  # depends on present high-sev
+    assert exit_code_for_findings(res["findings"], "high") in (
+        0,
+        1,
+    )  # depends on present high-sev
+
 
 def test_scan_path_handles_read_error(tmp_path: Path, monkeypatch):
     # Create two files; we'll force one to raise on read_text
@@ -50,10 +57,9 @@ def test_scan_path_handles_read_error(tmp_path: Path, monkeypatch):
     # To be explicit, require 'low' and expect failure; for 'med', might be 0 here if no med/high
     assert exit_code_for_findings(res["findings"], "low") == 1
 
+
 def test_exit_code_threshold_matrix():
-    findings = [
-        {"severity": "low"}, {"severity": "med"}, {"severity": "high"}
-    ]
+    findings = [{"severity": "low"}, {"severity": "med"}, {"severity": "high"}]
     assert exit_code_for_findings(findings, "low") == 1
     assert exit_code_for_findings(findings, "med") == 1
     assert exit_code_for_findings(findings, "high") == 1

@@ -1,13 +1,21 @@
+# SPDX-License-Identifier: MIT
+# Copyright (c) 2025 Robert Schneider
+
 """
 Report writers (JSON/CSV). Writing logic is already useful even with empty results.
 """
+
 from __future__ import annotations
-import json, csv
-from typing import List, Dict, Any, TextIO
+
+import csv
+import json
+from typing import Any, Dict, List, TextIO
+
 
 def to_json(findings: List[Dict[str, Any]], fp: TextIO) -> None:
     # Pretty, deterministic key order isn’t required, but nice for diffs
     json.dump(findings, fp, indent=2, ensure_ascii=False)
+
 
 def to_csv(findings: List[Dict[str, Any]], fp: TextIO) -> None:
     w = csv.DictWriter(

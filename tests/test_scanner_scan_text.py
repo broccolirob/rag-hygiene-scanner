@@ -1,6 +1,7 @@
 from rag_hygiene_scan.patterns import load_rules_from_config
 from rag_hygiene_scan.scanner import scan_text
 
+
 def test_scan_text_finds_multiple_rules_and_snippets():
     rules = load_rules_from_config(None)
     text = (

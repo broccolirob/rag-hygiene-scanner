@@ -1,13 +1,19 @@
+# SPDX-License-Identifier: MIT
+# Copyright (c) 2025 Robert Schneider
+
 """
 Core scanning functions
 """
+
 from __future__ import annotations
 
-from typing import Dict, Any, Iterable, List, Tuple, TypedDict
 import pathlib
+from typing import Any, Dict, Iterable, List, Tuple, TypedDict
+
 import yaml
 
 from .patterns import load_rules_from_config, severity_rank
+
 
 # ---------------- Types ----------------
 class Finding(TypedDict):
@@ -17,18 +23,22 @@ class Finding(TypedDict):
     desc: str
     evidence: str
 
+
 class ScanResult(TypedDict):
     files_scanned: int
     findings: List[Finding]
+
 
 # ---------------- Config ----------------
 ALLOWED_EXTS = {".md", ".markdown", ".txt", ".html", ".htm"}
 SKIP_DIRS = {".git", ".venv", "__pycache__", ".mypy_cache", ".pytest_cache"}
 MAX_SNIPPET_LEN = 200
 
+
 def should_scan_file(p: pathlib.Path) -> bool:
     """Return True if the file looks like a text doc we should scan."""
     return p.is_file() and p.suffix.lower() in ALLOWED_EXTS
+
 
 # ---------------- File walking ----------------
 def iter_files(path: pathlib.Path) -> Iterable[pathlib.Path]:
@@ -57,6 +67,7 @@ def iter_files(path: pathlib.Path) -> Iterable[pathlib.Path]:
             # Ignore unreadable entries quietly
             continue
 
+
 # ---------------- Config loader ----------------
 def load_config(cfg_path: str | None) -> Dict[str, Any] | None:
     """Load YAML into a dict, or return None if no path provided."""
@@ -64,6 +75,7 @@ def load_config(cfg_path: str | None) -> Dict[str, Any] | None:
         return None
     with open(cfg_path, "r", encoding="utf-8") as fh:
         return yaml.safe_load(fh)
+
 
 # ---------------- Text scanning ----------------
 def _make_snippet(text: str, span: Tuple[int, int], ctx: int = 40) -> str:
@@ -74,6 +86,7 @@ def _make_snippet(text: str, span: Tuple[int, int], ctx: int = 40) -> str:
     snippet = text[start:end].replace("\n", " ")
     return snippet[:MAX_SNIPPET_LEN]
 
+
 def scan_text(text: str, doc_id: str, rules) -> List[Finding]:
     """
     Apply compiled rules to a single text and return finding dicts.
@@ -82,14 +95,17 @@ def scan_text(text: str, doc_id: str, rules) -> List[Finding]:
     findings: List[Finding] = []
     for r in rules:
         for m in r.pattern.finditer(text):
-            findings.append(Finding(
-                doc_id=doc_id,
-                code=r.code,
-                severity=r.severity,
-                desc=r.desc,
-                evidence=_make_snippet(text, m.span()),
-            ))
+            findings.append(
+                Finding(
+                    doc_id=doc_id,
+                    code=r.code,
+                    severity=r.severity,
+                    desc=r.desc,
+                    evidence=_make_snippet(text, m.span()),
+                )
+            )
     return findings
+
 
 # ---------------- Path scanning ----------------
 def scan_path(path: str, cfg: Dict[str, Any] | None) -> ScanResult:
@@ -108,17 +124,20 @@ def scan_path(path: str, cfg: Dict[str, Any] | None) -> ScanResult:
         try:
             text = f.read_text(encoding="utf-8", errors="ignore")
         except Exception as e:
-            findings.append(Finding(
-                doc_id=f.as_posix(),
-                code="READERR",
-                severity="low",
-                desc=f"read_error: {e}",
-                evidence="",
-            ))
+            findings.append(
+                Finding(
+                    doc_id=f.as_posix(),
+                    code="READERR",
+                    severity="low",
+                    desc=f"read_error: {e}",
+                    evidence="",
+                )
+            )
             continue
         findings.extend(scan_text(text, f.as_posix(), rules))
 
     return ScanResult(files_scanned=files_scanned, findings=findings)
+
 
 # ---------------- Exit code logic ----------------
 def exit_code_for_findings(findings: List[Finding], min_sev: str) -> int:

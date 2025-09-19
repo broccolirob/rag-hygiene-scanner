@@ -3,7 +3,7 @@
 ![Python](https://img.shields.io/badge/python-3.10%2B-blue.svg)
 ![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)
 
-**Catch risky content *before* it reaches your RAG index.**  
+**Catch risky content *before* it reaches your RAG index.**
 Find:
 - **Indirect instruction indicators** — e.g., “ignore previous instructions”, “override policy”, benign canaries like `[TESTMARK]`
 - **Risky HTML/Markdown** — `<script>`, `<iframe>`, `javascript:` URIs (common XSS vectors if rendered)

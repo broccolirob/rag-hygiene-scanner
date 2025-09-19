@@ -1,5 +1,7 @@
 from pathlib import Path
+
 from rag_hygiene_scan.scanner import iter_files
+
 
 def test_iter_files_filters_extensions(tmp_path: Path):
     # Create a mix of files
@@ -16,6 +18,7 @@ def test_iter_files_filters_extensions(tmp_path: Path):
 
     names = sorted(p.name for p in iter_files(tmp_path))
     assert names == ["a.md", "b.markdown", "c.html", "d.txt", "e.htm"]
+
 
 def test_iter_files_accepts_single_file(tmp_path: Path):
     p = tmp_path / "solo.md"

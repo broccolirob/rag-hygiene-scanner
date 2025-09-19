@@ -214,3 +214,9 @@ __marimo__/
 
 # Streamlit
 .streamlit/secrets.toml
+
+# CI/CD generated reports
+bandit_report.txt
+rag_findings.json
+rag_findings.csv
+summary.txt

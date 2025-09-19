@@ -1,19 +1,24 @@
 import re
-from rag_hygiene_scan.patterns import load_rules_from_config, compile_re
+
+from rag_hygiene_scan.patterns import compile_re, load_rules_from_config
+
 
 def _by_code(rules):
     return {r.code: r for r in rules}
 
+
 def test_disable_rule_by_code():
     cfg = {"disable": ["INJ003"]}  # drop benign marker rule
     rules = _by_code(load_rules_from_config(cfg))
-    assert "INJ003" not in rules     # disabled
-    assert "INJ001" in rules         # others still present
+    assert "INJ003" not in rules  # disabled
+    assert "INJ001" in rules  # others still present
+
 
 def test_severity_override_applies_and_validates():
     cfg = {"severity_overrides": {"HTML003": "med"}}
     rules = _by_code(load_rules_from_config(cfg))
     assert rules["HTML003"].severity == "med"
+
 
 def test_add_custom_rule_and_replace_existing():
     cfg = {
@@ -40,6 +45,7 @@ def test_add_custom_rule_and_replace_existing():
     assert rules["INJ002"].desc.startswith("Override-policy")
     # The USR001 pattern should match (and be case-insensitive)
     assert rules["USR001"].pattern.search("Please COMPLY WITH THE NOTE BELOW.")
+
 
 def test_ignore_case_flag_controls_matching():
     cfg = {

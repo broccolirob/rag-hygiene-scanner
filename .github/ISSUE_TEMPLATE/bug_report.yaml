@@ -1,0 +1,38 @@
+name: Bug report
+description: Report a problem with rag-scan
+labels: [bug]
+body:
+  - type: textarea
+    id: summary
+    attributes:
+      label: Summary
+      description: Clear, concise description of the bug
+      placeholder: "Scanner misses a javascript: URI in ..."
+    validations: { required: true }
+  - type: input
+    id: version
+    attributes:
+      label: Version
+      placeholder: "0.1.0"
+  - type: dropdown
+    id: threshold
+    attributes:
+      label: Fail-on threshold used
+      options: [low, med, high, unknown]
+  - type: textarea
+    id: steps
+    attributes:
+      label: Steps to reproduce
+      description: Include sample input (redacted) and exact commands
+      placeholder: |
+        1) file content: ...
+        2) ran: rag-scan path --format json --fail-on med
+  - type: textarea
+    id: expected
+    attributes:
+      label: Expected vs. Actual
+  - type: textarea
+    id: output
+    attributes:
+      label: Relevant output
+      description: Paste CLI stderr summary and relevant JSON/CSV lines
